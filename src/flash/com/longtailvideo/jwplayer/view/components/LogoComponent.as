@@ -7,7 +7,7 @@ package com.longtailvideo.jwplayer.view.components {
 	import com.longtailvideo.jwplayer.utils.RootReference;
 	import com.longtailvideo.jwplayer.utils.Strings;
 	import com.longtailvideo.jwplayer.view.interfaces.IPlayerComponent;
-	
+
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.events.ErrorEvent;
@@ -16,16 +16,16 @@ package com.longtailvideo.jwplayer.view.components {
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
-	
+
 	public class LogoComponent extends CoreComponent implements IPlayerComponent {
 		/** Configuration defaults **/
 		protected var defaults:Object = {
-			prefix: "http://p.jwpcdn.com/", 
-			file: "logo.png", 
+			prefix: "http://p.jwpcdn.com/",
+			file: "logo.png",
 			link: 'http://www.longtailvideo.com/jwpabout/?a=l&v='+PlayerVersion.version+'&m=f&e=o',
 			linktarget: "_top",
-			margin: 8, 
-			hide: false, 
+			margin: 8,
+			hide: true,
 			position: "top-right"
 		}
 		/** Seconds after fading in to hide logo again **/
@@ -38,11 +38,11 @@ package com.longtailvideo.jwplayer.view.components {
 		protected var _alreadyShown:Boolean = false;
 		/** Whether the logo is currently visible **/
 		protected var _showing:Boolean = false;
-		
+
 		/** Dimensions **/
 		protected var _width:Number;
 		protected var _height:Number;
-		
+
 		/** Constructor **/
 		public function LogoComponent(player:IPlayer) {
 			super(player, "logo");
@@ -58,7 +58,7 @@ package com.longtailvideo.jwplayer.view.components {
 				show();
 			}
 		}
-		
+
 		private function _getLinkFlag(edition:String):String {
 			switch (edition.toLowerCase()) {
 				case "pro":
@@ -73,7 +73,7 @@ package com.longtailvideo.jwplayer.view.components {
 					return "f";
 			}
 		}
-		
+
 		private function _getEdition():String {
 			var edition:String = "";
 			try {
@@ -82,11 +82,11 @@ package com.longtailvideo.jwplayer.view.components {
 			catch(error:Error) {
 				edition = "open";
 			}
-			return edition;		
+			return edition;
 		}
-		
+
 		/**
-		 * This method can be overridden to set alternate default values. 
+		 * This method can be overridden to set alternate default values.
 		 */
 		protected function setupDefaults():void {
 			return;
@@ -99,7 +99,7 @@ package com.longtailvideo.jwplayer.view.components {
 			addEventListener(MouseEvent.CLICK, clickHandler);
 			this.mouseEnabled = false;
 		}
-		
+
 		protected function loadFile():void {
 			var versionRE:RegExp = /(\S+)\.(\S+)\./;
 			var versionInfo:Array = versionRE.exec(_player.version);
@@ -112,7 +112,7 @@ package com.longtailvideo.jwplayer.view.components {
 				} catch(e:Error) {}
 				defaults['file'] = prefix + versionInfo[1] + "/" + versionInfo[2] + "/" + getConfigParam('file');
 			}
-			
+
 			if (getConfigParam('file') && RootReference.root.loaderInfo.url.indexOf("http")==0) {
 				loader = new Loader();
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderHandler);
@@ -120,7 +120,7 @@ package com.longtailvideo.jwplayer.view.components {
 				loader.load(new URLRequest(getConfigParam('file')));
 			}
 		}
-		
+
 		/** Logo loaded - add to display **/
 		protected function loaderHandler(evt:Event):void {
 			if (loader is DisplayObject) {
@@ -130,13 +130,13 @@ package com.longtailvideo.jwplayer.view.components {
 				Logger.log("Logo was not a display object");
 			}
 		}
-		
+
 		/** Logo failed to load - die **/
 		protected function errorHandler(evt:ErrorEvent):void {
 			Logger.log("Failed to load logo: " + evt.text);
 		}
-		
-		
+
+
 		/** Handles mouse clicks **/
 		protected function clickHandler(evt:MouseEvent):void {
 			var link:String = getConfigParam('link');
@@ -154,20 +154,20 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-		
+
 		/** Handles mouse outs **/
 /*		protected function outHandler(evt:MouseEvent=null):void {
 			alpha = getConfigParam('out');
 		}
-		
-*/		
+
+*/
 		/** Handles mouse overs **/
 /*		protected function overHandler(evt:MouseEvent):void {
 			if (getConfigParam('link')) {
 				alpha = getConfigParam('over');
 			}
 		}
-		
+
 */
 		/** Fade in **/
 		override public function show():void {
@@ -177,8 +177,8 @@ package com.longtailvideo.jwplayer.view.components {
 			animations.fade(1, 0.25);
 			mouseEnabled = true;
 		}
-		
-		
+
+
 		/** Fade out **/
 		override public function hide(force:Boolean = false):void {
 			if (getConfigParam('hide').toString() == "true" || force) {
@@ -187,8 +187,8 @@ package com.longtailvideo.jwplayer.view.components {
 				animations.fade(0, 0.5);
 			}
 		}
-		
-		
+
+
 		/** Resizes the logo **/
 		override public function resize(width:Number, height:Number):void {
 			_width = width;
@@ -200,7 +200,7 @@ package com.longtailvideo.jwplayer.view.components {
 				} else {
 					image.x = margin;
 				}
-				
+
 				if (position.indexOf('bottom') >= 0) {
 					image.y = _height - image.height - margin;
 				} else {
@@ -208,19 +208,19 @@ package com.longtailvideo.jwplayer.view.components {
 				}
 			}
 		}
-		
+
 		public function get position():String {
 			return String(getConfigParam('position')).toLowerCase();
 		}
-		
+
 		public function get margin():Number {
 			return Number(getConfigParam('margin'));
 		}
-		
+
 		protected function get logo():DisplayObject {
 			return loader;
 		}
-		
+
 		/** Gets a configuration parameter **/
 		override protected function getConfigParam(param:String):* {
 			return defaults[param];

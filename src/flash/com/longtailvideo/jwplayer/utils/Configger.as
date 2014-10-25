@@ -34,16 +34,19 @@ package com.longtailvideo.jwplayer.utils {
 		 */
 		public function loadConfig():void {
 			loadCookies();
-			//loadFlashvars(RootReference.root.loaderInfo.parameters);
-			loadExternal();
+			if (RootReference.root.loaderInfo.parameters['file']) {
+				loadFlashvars(RootReference.root.loaderInfo.parameters);
+			}	else {
+				loadExternal();
+			}
 		}
 
 		/**
 		 * Loads configuration flashvars
 		 * @param params Hash map containing key/value pairs
 		 */
-		/*
 		public function loadFlashvars(params:Object):void {
+			/*dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, "ERROR LOADING FLASH VARS"));*/
 			try {
 				for (var param:String in params) {
 					setConfigParam(param, params[param]);
@@ -52,9 +55,8 @@ package com.longtailvideo.jwplayer.utils {
 			} catch (e:Error) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message));
 			}
-		
+
 		}
-		*/
 
 		/**
 		 * Loads configuration from JW Embedder
@@ -94,22 +96,22 @@ package com.longtailvideo.jwplayer.utils {
 			} catch (err:Error) {}
 		}
 
-		/** Overwrite cookie data. **/ 
+		/** Overwrite cookie data. **/
 		private function writeCookieData(obj:Object):void {
 			for (var cfv:String in obj) {
-				setConfigParam(cfv.toLowerCase(), obj[cfv]); 
+				setConfigParam(cfv.toLowerCase(), obj[cfv]);
 			}
 		}
 
 		private function setConfigParam(name:String, value:*):void {
-			// A list of forbidden config params 
+			// A list of forbidden config params
 			var disallowed:Vector.<RegExp> = new <RegExp>[ /fullscreen/i, /controlbar\./i, /playlist\./i ];
-			
+
 			// If a forbidden param gets matched, exit without setting the parameter.
 			for each(var regex:RegExp in disallowed) {
-				if (regex.test(name)) return;	
+				if (regex.test(name)) return;
 			}
-			
+
 			if (value is String) value = Strings.serialize(Strings.trim(value));
 			_config[name.toLowerCase()] = value;
 		}
